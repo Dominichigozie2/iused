@@ -17,13 +17,18 @@ type StoreState = {
   cart: CartItem[];
   wishlist: string[];
   cartOpen: boolean;
+  wishlistOpen: boolean;
+  quickViewProduct: Product | null;
   introDone: boolean;
   addToCart: (p: Product, qty?: number) => void;
   removeFromCart: (id: string) => void;
   setQty: (id: string, qty: number) => void;
   clearCart: () => void;
   toggleWishlist: (id: string) => void;
+  clearWishlist: () => void;
   setCartOpen: (open: boolean) => void;
+  setWishlistOpen: (open: boolean) => void;
+  setQuickViewProduct: (p: Product | null) => void;
   setIntroDone: (done: boolean) => void;
 };
 
@@ -33,6 +38,8 @@ export const useStore = create<StoreState>()(
       cart: [],
       wishlist: [],
       cartOpen: false,
+      wishlistOpen: false,
+      quickViewProduct: null,
       introDone: false,
       addToCart: (p, qty = 1) =>
         set((s) => {
@@ -61,7 +68,10 @@ export const useStore = create<StoreState>()(
         set((s) => ({
           wishlist: s.wishlist.includes(id) ? s.wishlist.filter((w) => w !== id) : [...s.wishlist, id],
         })),
-      setCartOpen: (open) => set({ cartOpen: open }),
+      clearWishlist: () => set({ wishlist: [] }),
+      setCartOpen: (open) => set({ cartOpen: open, ...(open ? { wishlistOpen: false } : {}) }),
+      setWishlistOpen: (open) => set({ wishlistOpen: open, ...(open ? { cartOpen: false } : {}) }),
+      setQuickViewProduct: (p) => set({ quickViewProduct: p }),
       setIntroDone: (done) => set({ introDone: done }),
     }),
     {
